@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuItemServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant-search-service</a> &gt; <a href="index.source.html" class="el_package">com.omf.service.impl</a> &gt; <span class="el_source">MenuItemServiceImpl.java</span></div><h1>MenuItemServiceImpl.java</h1><pre class="source lang-java linenums">package com.omf.service.impl;
+
+import com.omf.constant.MenuItemMessage;
+import com.omf.exception.ErrorConstant;
+import com.omf.exception.OrderMyFoodException;
+import com.omf.model.MenuItem;
+import com.omf.repository.MenuItemRepository;
+import com.omf.rest.model.MenuItemRequest;
+import com.omf.rest.model.MenuItemResponse;
+import com.omf.service.MenuItemService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class MenuItemServiceImpl implements MenuItemService {
+    private MenuItemRepository menuItemRepository;
+
+    @Autowired
+<span class="fc" id="L23">    public MenuItemServiceImpl(MenuItemRepository menuItemRepository) {</span>
+<span class="fc" id="L24">        this.menuItemRepository = menuItemRepository;</span>
+<span class="fc" id="L25">    }</span>
+
+    @Override
+    public List&lt;MenuItem&gt; findAllMenusByRestaurantId(String restaurantId) {
+<span class="fc" id="L29">        return menuItemRepository.findAllMenusByRestaurantId(restaurantId);</span>
+    }
+
+    @Override
+    public MenuItemResponse createMenuItem(MenuItemRequest menuItemRequest) {
+<span class="fc" id="L34">        MenuItemResponse menuItemResponse = new MenuItemResponse();</span>
+<span class="fc" id="L35">        MenuItem menuItem = new MenuItem();</span>
+<span class="fc" id="L36">        BeanUtils.copyProperties(menuItemRequest, menuItem);</span>
+<span class="fc" id="L37">        List&lt;MenuItem&gt; menuItems = menuItemRepository.findAllByRestaurantIdAndName(menuItem.getRestaurantId(),</span>
+<span class="fc" id="L38">                menuItem.getName());</span>
+        MenuItem createdMenuItem;
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (menuItems.size() == 0) createdMenuItem = menuItemRepository.save(menuItem);</span>
+        else
+<span class="fc" id="L42">            throw new OrderMyFoodException(ErrorConstant.MENU90);</span>
+
+<span class="fc" id="L44">        BeanUtils.copyProperties(createdMenuItem, menuItemResponse);</span>
+<span class="fc" id="L45">        menuItemResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L46">        menuItemResponse.setStatus(MenuItemMessage.CREATED);</span>
+<span class="fc" id="L47">        return menuItemResponse;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

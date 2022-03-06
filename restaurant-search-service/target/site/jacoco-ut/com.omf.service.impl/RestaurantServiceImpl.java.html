@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant-search-service</a> &gt; <a href="index.source.html" class="el_package">com.omf.service.impl</a> &gt; <span class="el_source">RestaurantServiceImpl.java</span></div><h1>RestaurantServiceImpl.java</h1><pre class="source lang-java linenums">package com.omf.service.impl;
+
+import com.omf.constant.RestaurantMessage;
+import com.omf.exception.ErrorConstant;
+import com.omf.exception.OrderMyFoodException;
+import com.omf.model.Restaurant;
+import com.omf.repository.RestaurantRepository;
+import com.omf.rest.model.RestaurantRequest;
+import com.omf.rest.model.RestaurantResponse;
+import com.omf.service.RestaurantService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+<span class="fc" id="L21">@Slf4j</span>
+public class RestaurantServiceImpl implements RestaurantService {
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+<span class="fc" id="L29">    public RestaurantServiceImpl(RestaurantRepository restaurantRepository) {</span>
+<span class="fc" id="L30">        this.restaurantRepository = restaurantRepository;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public RestaurantResponse createRestaurant(RestaurantRequest restaurantRequest) {
+<span class="fc" id="L35">        RestaurantResponse restaurantResponse = new RestaurantResponse();</span>
+<span class="fc" id="L36">        Restaurant restaurant = new Restaurant();</span>
+<span class="fc" id="L37">        BeanUtils.copyProperties(restaurantRequest, restaurant);</span>
+<span class="fc" id="L38">        List&lt;Restaurant&gt; restaurants = restaurantRepository.findByName(restaurantRequest.getName());</span>
+        Restaurant createdRestaurant;
+
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (restaurants.size() == 0) createdRestaurant = restaurantRepository.save(restaurant);</span>
+        else
+<span class="fc" id="L43">            throw new OrderMyFoodException(ErrorConstant.REST90);</span>
+
+<span class="fc" id="L45">        BeanUtils.copyProperties(createdRestaurant, restaurantResponse);</span>
+<span class="fc" id="L46">        restaurantResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L47">        restaurantResponse.setStatus(RestaurantMessage.CREATED);</span>
+<span class="fc" id="L48">        return restaurantResponse;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

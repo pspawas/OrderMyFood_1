@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant-search-service</a> &gt; <a href="index.source.html" class="el_package">com.omf.validation</a> &gt; <span class="el_source">RestaurantValidator.java</span></div><h1>RestaurantValidator.java</h1><pre class="source lang-java linenums">package com.omf.validation;
+
+import com.omf.exception.ErrorConstant;
+import com.omf.exception.OrderMyFoodError;
+import com.omf.exception.OrderMyFoodException;
+import com.omf.rest.model.OrderCancelRequest;
+import com.omf.rest.model.OrderRequest;
+import com.omf.rest.model.RestaurantRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="fc" id="L17">@Slf4j</span>
+@Component
+<span class="fc" id="L19">public class RestaurantValidator {</span>
+
+<span class="fc" id="L21">    private List&lt;OrderMyFoodError&gt; orderMyFoodErrors = new ArrayList&lt;&gt;();</span>
+
+    public void validateRestaurant(RestaurantRequest o) throws OrderMyFoodException {
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getName())) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.REST100));</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getLocation())) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.REST101));</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (o.getDistance() &lt;= 0) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.REST102));</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getCuisine())) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.REST103));</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (o.getBudget() &lt;= 0) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.REST104));</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (CollectionUtils.isNotEmpty(orderMyFoodErrors)) throw new OrderMyFoodException(orderMyFoodErrors);</span>
+<span class="fc" id="L30">    }</span>
+
+    public void validateOrder(OrderRequest o) throws OrderMyFoodException {
+<span class="pc bpc" id="L33" title="1 of 4 branches missed.">        if (o.getItemDetail() != null &amp;&amp; (StringUtils.isBlank(o.getItemDetail().getName())</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                || o.getItemDetail().getPrice() &lt;= 0</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                || o.getItemDetail().getQuantity() &lt;= 0))</span>
+<span class="nc" id="L36">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER115));</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getCustomerName()))</span>
+<span class="fc" id="L38">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER109));</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getCustomerCellNo()))</span>
+<span class="fc" id="L40">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER108));</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getSpecialNote()))</span>
+<span class="fc" id="L42">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER112));</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (CollectionUtils.isNotEmpty(orderMyFoodErrors)) throw new OrderMyFoodException(orderMyFoodErrors);</span>
+<span class="fc" id="L44">    }</span>
+
+    public void validateCancelOrder(OrderCancelRequest o) throws OrderMyFoodException {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (StringUtils.isBlank(o.getCustomerName()))</span>
+<span class="fc" id="L48">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER109));</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (o.getOrderIds() == null) orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER116));</span>
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">        if (o.getOrderIds() != null &amp;&amp; o.getOrderIds().length == 0)</span>
+<span class="nc" id="L51">            orderMyFoodErrors.add(OrderMyFoodError.build(ErrorConstant.ORDER117));</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (CollectionUtils.isNotEmpty(orderMyFoodErrors)) throw new OrderMyFoodException(orderMyFoodErrors);</span>
+<span class="fc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

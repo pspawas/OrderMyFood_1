@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant-search-service</a> &gt; <a href="index.source.html" class="el_package">com.omf.service.impl</a> &gt; <span class="el_source">OrderServiceImpl.java</span></div><h1>OrderServiceImpl.java</h1><pre class="source lang-java linenums">package com.omf.service.impl;
+
+import com.mongodb.client.result.UpdateResult;
+import com.omf.constant.OrderMessage;
+import com.omf.exception.ErrorConstant;
+import com.omf.exception.OrderMyFoodException;
+import com.omf.model.Order;
+import com.omf.repository.OrderRepository;
+import com.omf.rest.model.OrderCancelRequest;
+import com.omf.rest.model.OrderCancelResponse;
+import com.omf.rest.model.OrderRequest;
+import com.omf.rest.model.OrderResponse;
+import com.omf.service.OrderService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class OrderServiceImpl implements OrderService {
+    private static final String PAID = &quot;PAID&quot;;
+    private static final String UNPAID = &quot;UNPAID&quot;;
+    private static final String NEW = &quot;NEW&quot;;
+    private static final String ORG = &quot;_ORG&quot;;
+    private static final String CANCELED = &quot;CANCELED&quot;;
+    private static final String REVISED = &quot;_REVISED&quot;;
+    private static final String ITEM_DETAIL_NAME = &quot;itemDetail.name&quot;;
+    private static final String ITEM_DETAIL = &quot;itemDetail&quot;;
+    private static final String TOTAL_PRICE = &quot;totalPrice&quot;;
+    private static final String PAYMENT_ID = &quot;paymentId&quot;;
+    private static final String STATUS = &quot;status&quot;;
+    private static final String UPDATED = &quot;UPDATED&quot;;
+    private static final String CUSTOMER_NAME = &quot;customerName&quot;;
+    private static final String ORDER_ID = &quot;orderId&quot;;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+<span class="fc" id="L48">    public OrderServiceImpl(OrderRepository orderRepository, MongoTemplate mongoTemplate) {</span>
+<span class="fc" id="L49">        this.orderRepository = orderRepository;</span>
+<span class="fc" id="L50">        this.mongoTemplate = mongoTemplate;</span>
+<span class="fc" id="L51">    }</span>
+
+    @Override
+    public OrderResponse createOrder(OrderRequest orderRequest) {
+
+<span class="fc" id="L56">        List&lt;Order&gt; orders = orderRepository.findByCustomerNameAndItemDetailName(orderRequest.getCustomerName(),</span>
+<span class="fc" id="L57">                orderRequest.getItemDetail().getName());</span>
+<span class="fc" id="L58">        OrderResponse orderResponse = null;</span>
+<span class="pc bpc" id="L59" title="1 of 4 branches missed.">        if (orders != null &amp;&amp; orders.size() == 0) {</span>
+<span class="fc" id="L60">            orderRequest.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L61">            orderRequest.setTotalPrice(orderRequest.getItemDetail().getPrice() *</span>
+<span class="fc" id="L62">                    orderRequest.getItemDetail().getQuantity());</span>
+<span class="fc" id="L63">            orderRequest.setOrderTime(System.currentTimeMillis());</span>
+<span class="fc" id="L64">            orderRequest.setDeliveryTime(System.currentTimeMillis() + 300000);</span>
+<span class="fc" id="L65">            orderRequest.setPaymentId(orderRequest.getCustomerCellNo() + ORG);</span>
+
+<span class="fc" id="L67">            orderResponse = new OrderResponse();</span>
+<span class="fc" id="L68">            Order order = new Order();</span>
+<span class="fc" id="L69">            BeanUtils.copyProperties(orderRequest, order);</span>
+<span class="fc" id="L70">            order.setStatus(NEW);</span>
+<span class="fc" id="L71">            orderRepository.save(order);</span>
+
+<span class="fc" id="L73">            orderResponse.setRestaurantId(order.getRestaurantId());</span>
+<span class="fc" id="L74">            orderResponse.setOrderId(order.getOrderId());</span>
+<span class="fc" id="L75">            orderResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L76">            orderResponse.setStatus(OrderMessage.CREATED);</span>
+<span class="fc" id="L77">        } else throw new OrderMyFoodException(ErrorConstant.ORDER90);</span>
+<span class="fc" id="L78">        return orderResponse;</span>
+    }
+
+    @Override
+    public OrderResponse updateOrder(OrderRequest orderRequest) {
+
+<span class="fc" id="L84">        OrderResponse orderResponse = null;</span>
+<span class="fc" id="L85">        List&lt;Order&gt; ordersForRestaurantId = orderRepository.findByRestaurantId(orderRequest.getRestaurantId());</span>
+
+<span class="pc bpc" id="L87" title="2 of 4 branches missed.">        if (ordersForRestaurantId != null &amp;&amp; ordersForRestaurantId.size() == 0)</span>
+<span class="nc" id="L88">            throw new OrderMyFoodException(ErrorConstant.ORDER91);</span>
+
+<span class="fc" id="L90">        List&lt;Order&gt; ordersForCustomerNameAndItem = orderRepository.findByCustomerNameAndItemDetailName(</span>
+<span class="fc" id="L91">                orderRequest.getCustomerName(), orderRequest.getItemDetail().getName());</span>
+
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">        if (ordersForCustomerNameAndItem != null &amp;&amp; ordersForCustomerNameAndItem.size() == 0)</span>
+<span class="nc" id="L94">            throw new OrderMyFoodException(ErrorConstant.ITEM91);</span>
+
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">        if (ordersForCustomerNameAndItem != null &amp;&amp; ordersForCustomerNameAndItem.size() == 1) {</span>
+<span class="fc" id="L97">            orderRequest.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L98">            orderRequest.setTotalPrice(orderRequest.getItemDetail().getPrice() *</span>
+<span class="fc" id="L99">                    orderRequest.getItemDetail().getQuantity());</span>
+<span class="fc" id="L100">            orderRequest.setPaymentId(orderRequest.getCustomerCellNo() + REVISED);</span>
+
+<span class="fc" id="L102">            Query query = new Query();</span>
+<span class="fc" id="L103">            query.addCriteria(Criteria.where(CUSTOMER_NAME).is(orderRequest.getCustomerName()));</span>
+<span class="fc" id="L104">            query.addCriteria(Criteria.where(ITEM_DETAIL_NAME).is(orderRequest.getItemDetail().getName()));</span>
+
+<span class="fc" id="L106">            Update update = new Update();</span>
+<span class="fc" id="L107">            update.set(ITEM_DETAIL, orderRequest.getItemDetail());</span>
+<span class="fc" id="L108">            update.set(TOTAL_PRICE, orderRequest.getTotalPrice());</span>
+<span class="fc" id="L109">            update.set(PAYMENT_ID, orderRequest.getCustomerCellNo() + REVISED);</span>
+<span class="fc" id="L110">            update.set(STATUS, UPDATED);</span>
+<span class="fc" id="L111">            UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Order.class);</span>
+
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">            if (updateResult.getModifiedCount() == 1) {</span>
+<span class="fc" id="L114">                orderResponse = new OrderResponse();</span>
+<span class="fc" id="L115">                orderResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L116">                orderResponse.setRestaurantId(orderRequest.getRestaurantId());</span>
+<span class="fc" id="L117">                orderResponse.setStatus(OrderMessage.MODIFIED);</span>
+<span class="fc" id="L118">                orderResponse.setOrderId(ordersForCustomerNameAndItem.get(0).getOrderId());</span>
+<span class="nc" id="L119">            } else throw new OrderMyFoodException(ErrorConstant.ORDER105);</span>
+<span class="pc" id="L120">        } else throw new OrderMyFoodException(ErrorConstant.ORDER90);</span>
+<span class="fc" id="L121">        return orderResponse;</span>
+    }
+
+    @Override
+    public OrderResponse updateOderAfterPayment(Order order) {
+<span class="fc" id="L126">        OrderResponse orderResponse = null;</span>
+<span class="fc" id="L127">        Query query = new Query();</span>
+<span class="fc" id="L128">        query.addCriteria(Criteria.where(ORDER_ID).is(order.getOrderId()));</span>
+
+<span class="fc" id="L130">        Update update = new Update();</span>
+<span class="fc" id="L131">        update.set(STATUS, PAID);</span>
+<span class="fc" id="L132">        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Order.class);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (updateResult.getModifiedCount() == 1) {</span>
+<span class="fc" id="L134">            orderResponse = new OrderResponse();</span>
+<span class="fc" id="L135">            orderResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L136">            orderResponse.setStatus(OrderMessage.PAID);</span>
+<span class="fc" id="L137">            orderResponse.setPaymentStatus(PAID);</span>
+        } else {
+<span class="nc" id="L139">            orderResponse = new OrderResponse();</span>
+<span class="nc" id="L140">            orderResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="nc" id="L141">            orderResponse.setStatus(OrderMessage.NOT_PAID);</span>
+<span class="nc" id="L142">            orderResponse.setPaymentStatus(UNPAID);</span>
+        }
+<span class="fc" id="L144">        return orderResponse;</span>
+    }
+
+    @Override
+    public OrderCancelResponse cancelOrder(OrderCancelRequest orderCancelRequest) {
+<span class="fc" id="L149">        Arrays.stream(orderCancelRequest.getOrderIds()).forEach(</span>
+                orderId -&gt; {
+<span class="fc" id="L151">                    Order order = orderRepository.getByOrderIdAndCustomerName(orderId, orderCancelRequest.getCustomerName());</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">                    if (order == null) throw new OrderMyFoodException(ErrorConstant.ORDER92);</span>
+<span class="fc" id="L153">                }</span>
+        );
+<span class="fc" id="L155">        Query query = new Query();</span>
+<span class="fc" id="L156">        query.addCriteria(Criteria.where(ORDER_ID).in(orderCancelRequest.getOrderIds()));</span>
+<span class="fc" id="L157">        query.addCriteria(Criteria.where(CUSTOMER_NAME).is(orderCancelRequest.getCustomerName()));</span>
+<span class="fc" id="L158">        Update update = new Update();</span>
+<span class="fc" id="L159">        update.set(STATUS, CANCELED);</span>
+<span class="fc" id="L160">        UpdateResult updateResult = mongoTemplate.updateMulti(query, update, Order.class);</span>
+        OrderCancelResponse orderCancelResponse;
+<span class="pc bpc" id="L162" title="2 of 4 branches missed.">        if (updateResult.getModifiedCount() != 0 &amp;&amp; updateResult.getModifiedCount() == orderCancelRequest.getOrderIds().length) {</span>
+<span class="fc" id="L163">            orderCancelResponse = new OrderCancelResponse();</span>
+<span class="fc" id="L164">            orderCancelResponse.setTransactionId(UUID.randomUUID().toString());</span>
+<span class="fc" id="L165">            orderCancelResponse.setStatus(OrderMessage.CANCELED);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        } else if (updateResult.getModifiedCount() != 0 &amp;&amp; updateResult.getModifiedCount() &lt;</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                orderCancelRequest.getOrderIds().length) throw new OrderMyFoodException(ErrorConstant.ORDER107);</span>
+        else
+<span class="nc" id="L169">            throw new OrderMyFoodException(ErrorConstant.ORDER106);</span>
+<span class="fc" id="L170">        return orderCancelResponse;</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; getOrderByCustomerName(String customerName) {
+<span class="fc" id="L175">        List&lt;Order&gt; orders = orderRepository.findByCustomerName(customerName);</span>
+<span class="pc bpc" id="L176" title="2 of 4 branches missed.">        if (orders != null &amp;&amp; orders.size() == 0) throw new OrderMyFoodException(ErrorConstant.CUSTOMER91);</span>
+<span class="fc" id="L177">        return orders;</span>
+    }
+
+    @Override
+    public List&lt;Order&gt; getByOrderId(String orderId) {
+<span class="fc" id="L182">        List&lt;Order&gt; orders = orderRepository.findByOrderId(orderId);</span>
+<span class="pc bpc" id="L183" title="2 of 4 branches missed.">        if (orders != null &amp;&amp; orders.size() == 0) throw new OrderMyFoodException(ErrorConstant.ORDER93);</span>
+<span class="fc" id="L184">        return orders;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

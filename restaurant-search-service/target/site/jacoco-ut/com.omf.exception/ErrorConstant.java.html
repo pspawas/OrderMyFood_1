@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErrorConstant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant-search-service</a> &gt; <a href="index.source.html" class="el_package">com.omf.exception</a> &gt; <span class="el_source">ErrorConstant.java</span></div><h1>ErrorConstant.java</h1><pre class="source lang-java linenums">package com.omf.exception;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+<span class="nc" id="L7">public class ErrorConstant {</span>
+
+    public static final String REST90 = &quot;REST90&quot;;
+    public static final String REST100 = &quot;REST100&quot;;
+
+    public static final String REST101 = &quot;REST101&quot;;
+    public static final String REST102 = &quot;REST102&quot;;
+    public static final String REST103 = &quot;REST103&quot;;
+    public static final String REST104 = &quot;REST104&quot;;
+    public static final String ORDER90 = &quot;ORDER90&quot;;
+    public static final String ORDER92 = &quot;ORDER92&quot;;
+    public static final String ORDER105 = &quot;ORDER105&quot;;
+    public static final String ORDER106 = &quot;ORDER106&quot;;
+    public static final String ORDER107 = &quot;ORDER107&quot;;
+    public static final String CUSTOMER91 = &quot;CUSTOMER91&quot;;
+    public static final String ORDER91 = &quot;ORDER91&quot;;
+    public static final String ORDER93 = &quot;ORDER93&quot;;
+    public static final String ITEM91 = &quot;ITEM91&quot;;
+    public static final String MENU90 = &quot;MENU90&quot;;
+    public static final String MENU100 = &quot;MENU100&quot;;
+    public static final String MENU101 = &quot;MENU101&quot;;
+    public static final String MENU102 = &quot;MENU102&quot;;
+    public static final String ORDER115 = &quot;ORDER115&quot;;
+    public static final String ORDER112 = &quot;ORDER112&quot;;
+    public static final String ORDER108 = &quot;ORDER108&quot;;
+    public static final String ORDER109 = &quot;ORDER109&quot;;
+    public static final String ORDER116 = &quot;ORDER116&quot;;
+    public static final String ORDER117 = &quot;ORDER117&quot;;
+<span class="fc" id="L35">    static final Map&lt;String, String&gt; REST_ERRORS = new HashMap&lt;&gt;();</span>
+    private static final String ORDER110 = &quot;ORDER110&quot;;
+    private static final String ORDER111 = &quot;ORDER111&quot;;
+    private static final String ORDER113 = &quot;ORDER113&quot;;
+    private static final String ORDER114 = &quot;ORDER114&quot;;
+    private static final String ORDER100 = &quot;ORDER100&quot;;
+    private static final String ORDER101 = &quot;ORDER101&quot;;
+    private static final String ORDER102 = &quot;ORDER102&quot;;
+    private static final String ORDER103 = &quot;ORDER103&quot;;
+    private static final String ORDER104 = &quot;ORDER104&quot;;
+
+    static {
+<span class="fc" id="L47">        REST_ERRORS.put(ORDER90, &quot;Menu item with customer already exist.&quot;);</span>
+<span class="fc" id="L48">        REST_ERRORS.put(ORDER91, &quot;Restaurant not found.&quot;);</span>
+<span class="fc" id="L49">        REST_ERRORS.put(ORDER92, &quot;Customer/some orders not found.&quot;);</span>
+<span class="fc" id="L50">        REST_ERRORS.put(ORDER93, &quot;Orders not found.&quot;);</span>
+<span class="fc" id="L51">        REST_ERRORS.put(ORDER100, &quot;Invalid restaurant name given.&quot;);</span>
+<span class="fc" id="L52">        REST_ERRORS.put(ORDER101, &quot;Invalid restaurant location given.&quot;);</span>
+<span class="fc" id="L53">        REST_ERRORS.put(ORDER102, &quot;Restaurant restaurant distance given.&quot;);</span>
+<span class="fc" id="L54">        REST_ERRORS.put(ORDER103, &quot;Restaurant restaurant cuisine given.&quot;);</span>
+<span class="fc" id="L55">        REST_ERRORS.put(ORDER104, &quot;Restaurant restaurant budget given.&quot;);</span>
+<span class="fc" id="L56">        REST_ERRORS.put(ORDER105, &quot;Menu item's change not found.&quot;);</span>
+<span class="fc" id="L57">        REST_ERRORS.put(ORDER106, &quot;Orders already canceled.&quot;);</span>
+<span class="fc" id="L58">        REST_ERRORS.put(ORDER107, &quot;Some orders canceled and some not found.&quot;);</span>
+
+<span class="fc" id="L60">        REST_ERRORS.put(ORDER108, &quot;Invalid Customer cell number given.&quot;);</span>
+<span class="fc" id="L61">        REST_ERRORS.put(ORDER109, &quot;Invalid Customer name given.&quot;);</span>
+<span class="fc" id="L62">        REST_ERRORS.put(ORDER110, &quot;Invalid Payment Id.&quot;);</span>
+<span class="fc" id="L63">        REST_ERRORS.put(ORDER111, &quot;Invalid Delivery time given.&quot;);</span>
+<span class="fc" id="L64">        REST_ERRORS.put(ORDER112, &quot;Invalid Special note given.&quot;);</span>
+<span class="fc" id="L65">        REST_ERRORS.put(ORDER113, &quot;Invalid Order time given.&quot;);</span>
+<span class="fc" id="L66">        REST_ERRORS.put(ORDER114, &quot;Invalid Total price given.&quot;);</span>
+<span class="fc" id="L67">        REST_ERRORS.put(ORDER115, &quot;Invalid Item Detail given.&quot;);</span>
+
+<span class="fc" id="L69">        REST_ERRORS.put(ORDER116, &quot;Invalid Order ID given.&quot;);</span>
+<span class="fc" id="L70">        REST_ERRORS.put(ORDER117, &quot;Invalid Order ID size given.&quot;);</span>
+
+<span class="fc" id="L72">        REST_ERRORS.put(MENU90, &quot;Menu items already exist for given restaurant ID.&quot;);</span>
+<span class="fc" id="L73">        REST_ERRORS.put(MENU100, &quot;Invalid menu name given.&quot;);</span>
+<span class="fc" id="L74">        REST_ERRORS.put(MENU101, &quot;Invalid menu description given.&quot;);</span>
+<span class="fc" id="L75">        REST_ERRORS.put(MENU102, &quot;Invalid menu price given.&quot;);</span>
+
+<span class="fc" id="L77">        REST_ERRORS.put(REST90, &quot;Restaurant name already exist.&quot;);</span>
+<span class="fc" id="L78">        REST_ERRORS.put(REST100, &quot;Invalid restaurant name given.&quot;);</span>
+<span class="fc" id="L79">        REST_ERRORS.put(REST101, &quot;Invalid restaurant location given.&quot;);</span>
+<span class="fc" id="L80">        REST_ERRORS.put(REST102, &quot;Restaurant restaurant distance given.&quot;);</span>
+<span class="fc" id="L81">        REST_ERRORS.put(REST103, &quot;Restaurant restaurant cuisine given.&quot;);</span>
+<span class="fc" id="L82">        REST_ERRORS.put(REST104, &quot;Restaurant restaurant budget given.&quot;);</span>
+
+<span class="fc" id="L84">        REST_ERRORS.put(CUSTOMER91, &quot;Customer not found.&quot;);</span>
+<span class="fc" id="L85">        REST_ERRORS.put(ITEM91, &quot;Customer/Item not found.&quot;);</span>
+<span class="fc" id="L86">    }</span>
+
+    static List getError(String errorCode) {
+<span class="fc" id="L89">        return List.of(OrderMyFoodError.build(errorCode));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
