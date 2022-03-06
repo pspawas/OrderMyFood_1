@@ -1,0 +1,3 @@
+2022-03-07 00:03:24.240  INFO [order-my-food,,] 26752 --- [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2022-03-07 00:08:24.258  INFO [order-my-food,,] 26752 --- [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2022-03-07 00:13:24.269  INFO [order-my-food,,] 26752 --- [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
