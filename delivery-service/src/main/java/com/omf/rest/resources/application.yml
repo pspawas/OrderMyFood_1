@@ -1,0 +1,27 @@
+server:
+  port: 8003
+
+spring:
+  application:
+    name: delivery-service
+  data:
+    mongodb:
+      auto-index-creation: true
+  zipkin:
+    enabled: true
+
+logging:
+  file:
+    name: D:/201/OrderMyFood/delivery-service/delivery.log
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

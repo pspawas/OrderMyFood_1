@@ -1,0 +1,13 @@
+server:
+  port: ${PORT:8761}
+
+spring:
+  zipkin:
+    enabled: false
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
